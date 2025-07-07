@@ -127,6 +127,10 @@
                     }
                 });
                 const data = await response.json();
+
+                // Логування відповіді API
+                console.log('API Response:', data);
+
                 if (data.data && data.data.length > 0) {
                     const serverName = data.data[0].attributes.name;
                     serverNameElement.textContent = serverName ? serverName : 'Server not found';
