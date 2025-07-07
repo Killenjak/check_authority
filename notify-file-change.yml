@@ -3,7 +3,7 @@ name: Notify Discord on file.json change
 on:
   push:
     paths:
-      - 'file.json'  # цей параметр реагує тільки на зміни file.json
+      - 'whitelist.json'  # цей параметр реагує тільки на зміни file.json
 
 jobs:
   notify:
