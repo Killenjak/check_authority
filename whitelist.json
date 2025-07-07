@@ -1,7 +1,16 @@
 {
-  "servers": [
-    { "number": "1", "servername": "Palyanytsia", "IP-adress": "91.200.42.30" },
-    { "number": "2", "servername": "Server2", "IP-adress": "2.2.2.2" },
-    { "number": "3", "servername": "Server3", "IP-adress": "3.3.3.3" }
+  "allowed_servers": [
+    {
+      "ip": "91.200.42.30",
+      "ports": [2302, 2303]
+    },
+    {
+      "ip": "193.25.252.193",
+      "ports": [2302, 27016]
+    },
+    {
+      "ip": "192.168.0.188",
+      "ports": [2302, 2303]
+    }
   ]
 }
