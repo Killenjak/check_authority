@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whitelist</title>
+    <title>Whitelist Servers</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,76 +55,57 @@
             padding: 5px 10px;
             cursor: pointer;
             border-radius: 5px;
-            font-size: 14px;
         }
         .copy-btn:hover {
-            background-color: #5b6eae; /* Darker blue on hover */
+            background-color: #5a6db1; /* Трохи темніший відтінок для hover */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Whitelist</h1>
-        <div class="ip-list" id="ip-list">
-            <!-- IP addresses will be inserted here -->
+        <h1>Server Whitelist</h1>
+        <div class="ip-list" id="ipList">
+            <!-- IP список буде тут -->
         </div>
     </div>
 
     <script>
-        // URL на файл whitelist.json на вашому GitHub
-        const jsonUrl = 'https://killenjak.github.io/check_authority/whitelist.json';
+        // URL до файлу JSON на GitHub
+        const fileUrl = 'https://killenjak.github.io/check_authority/whitelist.json';
 
-        // Функція для отримання даних з GitHub
-        async function fetchWhitelistData() {
-            try {
-                const response = await fetch(jsonUrl);
-                const data = await response.json();
-                renderIPList(data.allowed_ips);
-            } catch (error) {
-                console.error('Error fetching whitelist data:', error);
-            }
-        }
-
-        // Функція для відображення IP-адрес в списку
-        function renderIPList(ips) {
-            const ipListContainer = document.getElementById('ip-list');
-            ipListContainer.innerHTML = ''; // Очищаємо список перед додаванням нових елементів
-
-            ips.forEach(ip => {
-                const ipItem = document.createElement('div');
-                ipItem.classList.add('ip-item');
-                
-                // Створюємо елемент для відображення IP
-                const ipText = document.createElement('span');
-                ipText.textContent = ip;
-
-                // Створюємо кнопку для копіювання
-                const copyButton = document.createElement('button');
-                copyButton.classList.add('copy-btn');
-                copyButton.textContent = 'Copy';
-                copyButton.onclick = () => copyToClipboard(ip);
-
-                ipItem.appendChild(ipText);
-                ipItem.appendChild(copyButton);
-                ipListContainer.appendChild(ipItem);
+        // Завантаження JSON з GitHub
+        fetch(fileUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Виведення серверів на сторінку
+                const ipListElement = document.getElementById('ipList');
+                data.servers.forEach(server => {
+                    const ipItem = document.createElement('div');
+                    ipItem.classList.add('ip-item');
+                    ipItem.innerHTML = `
+                        <span>${server.number} - ${server.servername}</span>
+                        <span>${server["IP-adress"]}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${server["IP-adress"]}')">COPY</button>
+                    `;
+                    ipListElement.appendChild(ipItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading JSON:', error);
             });
-        }
 
-        // Функція для копіювання IP в буфер обміну
+        // Функція для копіювання IP до буфера обміну
         function copyToClipboard(ip) {
-            const textArea = document.createElement('textarea');
-            textArea.value = ip;
-            document.body.appendChild(textArea);
-            textArea.select();
+            const tempInput = document.createElement('input');
+            tempInput.value = ip;
+            document.body.appendChild(tempInput);
+            tempInput.select();
             document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert(`IP Address ${ip} copied to clipboard!`);
+            document.body.removeChild(tempInput);
+            alert(`IP ${ip} скопійовано в буфер!`);
         }
-
-        // Завантаження даних при завантаженні сторінки
-        window.onload = fetchWhitelistData;
     </script>
-    
+
 </body>
 </html>
