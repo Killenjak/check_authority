@@ -1,7 +1,7 @@
 {
   "servers": [
-    { "number": "1", "servername": "server1", "IP-adress": "1.1.1.1" },
-    { "number": "2", "servername": "server2", "IP-adress": "2.2.2.2" },
-    { "number": "3", "servername": "server3", "IP-adress": "3.3.3.3" }
+    { "number": "1", "servername": "Palyanytsia", "IP-adress": "91.200.42.30" },
+    { "number": "2", "servername": "Server2", "IP-adress": "2.2.2.2" },
+    { "number": "3", "servername": "Server3", "IP-adress": "3.3.3.3" }
   ]
 }
