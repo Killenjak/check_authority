@@ -1,40 +1,93 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Мій сайт на GitHub</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #6dd5ed, #2193b0);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    h1 {
-      font-size: 3em;
-      margin-bottom: 0.5em;
-    }
-    p {
-      font-size: 1.2em;
-      max-width: 600px;
-    }
-    a {
-      color: #fff;
-      text-decoration: underline;
-      margin-top: 2em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitelist Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td, th {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .editable {
+            width: 80%;
+        }
+    </style>
 </head>
 <body>
-  <h1>Привіт, світ! 👋</h1>
-  <p>Це мій перший односторінковий сайт, який я розмістив(ла) на GitHub Pages. Дякую, що завітали!</p>
-  <a href="https://github.com/Killenjak/check_authority" target="_blank">Мій GitHub профіль</a>
+
+    <h1>Whitelist Editor</h1>
+    <table id="whitelist-table">
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // URL на файл whitelist.json на GitHub
+        const jsonUrl = 'https://raw.githubusercontent.com/your-username/your-repository/main/whitelist.json';
+
+        // Функція для отримання даних з GitHub
+        async function fetchWhitelistData() {
+            try {
+                const response = await fetch(jsonUrl);
+                const data = await response.json();
+                renderWhitelist(data.allowed_ips);
+            } catch (error) {
+                console.error('Error fetching whitelist data:', error);
+            }
+        }
+
+        // Функція для відображення IP-адрес в таблиці
+        function renderWhitelist(ips) {
+            const tableBody = document.querySelector('#whitelist-table tbody');
+            tableBody.innerHTML = ''; // Очистити таблицю перед додаванням нових даних
+
+            ips.forEach(ip => {
+                const row = document.createElement('tr');
+                
+                const ipCell = document.createElement('td');
+                const ipInput = document.createElement('input');
+                ipInput.type = 'text';
+                ipInput.value = ip;
+                ipInput.classList.add('editable');
+                ipCell.appendChild(ipInput);
+                row.appendChild(ipCell);
+                
+                const actionCell = document.createElement('td');
+                const saveButton = document.createElement('button');
+                saveButton.textContent = 'Save';
+                saveButton.onclick = () => saveIP(ip, ipInput.value);
+                actionCell.appendChild(saveButton);
+                row.appendChild(actionCell);
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Функція для збереження нової IP-адреси (тимчасова)
+        function saveIP(oldIP, newIP) {
+            console.log(`Saved IP changed from ${oldIP} to ${newIP}`);
+            // Тут можна реалізувати збереження нової IP-адреси в файл (необхідно мати сервер для цієї операції)
+        }
+
+        // Завантаження даних після завантаження сторінки
+        window.onload = fetchWhitelistData;
+    </script>
 </body>
 </html>
