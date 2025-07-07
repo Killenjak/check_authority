@@ -30,7 +30,6 @@
         <thead>
             <tr>
                 <th>IP Address</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -40,7 +39,7 @@
 
     <script>
         // URL на файл whitelist.json на GitHub
-        const jsonUrl = 'https://killenjak.github.io/check_authority/whitelist.json';
+        const jsonUrl = 'https://raw.githubusercontent.com/your-username/your-repository/main/whitelist.json';
 
         // Функція для отримання даних з GitHub
         async function fetchWhitelistData() {
@@ -66,24 +65,17 @@
                 ipInput.type = 'text';
                 ipInput.value = ip;
                 ipInput.classList.add('editable');
+                
+                // Додаємо обробник для зміни значення IP-адреси
+                ipInput.addEventListener('input', () => {
+                    console.log(`IP Address changed to: ${ipInput.value}`);
+                    // Тут можна додати код для збереження змін
+                });
+                
                 ipCell.appendChild(ipInput);
                 row.appendChild(ipCell);
-                
-                const actionCell = document.createElement('td');
-                const saveButton = document.createElement('button');
-                saveButton.textContent = 'Save';
-                saveButton.onclick = () => saveIP(ip, ipInput.value);
-                actionCell.appendChild(saveButton);
-                row.appendChild(actionCell);
-                
                 tableBody.appendChild(row);
             });
-        }
-
-        // Функція для збереження нової IP-адреси (тимчасова)
-        function saveIP(oldIP, newIP) {
-            console.log(`Saved IP changed from ${oldIP} to ${newIP}`);
-            // Тут можна реалізувати збереження нової IP-адреси в файл (необхідно мати сервер для цієї операції)
         }
 
         // Завантаження даних після завантаження сторінки
