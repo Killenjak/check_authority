@@ -81,39 +81,18 @@
                 // Виведення серверів на сторінку
                 const ipListElement = document.getElementById('ipList');
                 data.allowed_servers.forEach((server, index) => {
-                    const queryPort = server.ports[1]; // беремо другий порт
-                    const serverUrl = `https://dayzsalauncher.com/#/servercheck/${server.ip}:${queryPort}`;
-                    
-                    // Отримуємо назву сервера з dayzsalauncher.com
-                    fetch(serverUrl)
-                        .then(response => response.text())
-                        .then(html => {
-                            const serverName = getServerNameFromHtml(html);
-                            const ipItem = document.createElement('div');
-                            ipItem.classList.add('ip-item');
-                            ipItem.innerHTML = `
-                                <span>${index + 1}. ${serverName}</span>
-                                <span>${server.ip}</span>
-                                <button class="copy-btn" onclick="copyToClipboard('${server.ip}')">COPY</button>
-                            `;
-                            ipListElement.appendChild(ipItem);
-                        })
-                        .catch(error => {
-                            console.error('Error fetching server name:', error);
-                        });
+                    const ipItem = document.createElement('div');
+                    ipItem.classList.add('ip-item');
+                    ipItem.innerHTML = `
+                        <span>${index + 1}. ${server.ip}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${server.ip}')">COPY</button>
+                    `;
+                    ipListElement.appendChild(ipItem);
                 });
             })
             .catch(error => {
                 console.error('Error loading JSON:', error);
             });
-
-        // Функція для отримання назви сервера з HTML сторінки
-        function getServerNameFromHtml(html) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const serverName = doc.querySelector('h3'); // Тег де знаходиться назва сервера
-            return serverName ? serverName.textContent : 'Unknown Server';
-        }
 
         // Функція для копіювання IP до буфера обміну
         function copyToClipboard(ip) {
