@@ -3,106 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whitelist Editor</title>
+    <title>Whitelist</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background-color: #2f3136; /* Discord-like dark grey */
+            height: 100vh;
+            align-items: center;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        td, th {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        .editable {
+        .container {
             width: 80%;
+            max-width: 800px;
+            background-color: #36393f; /* Slightly lighter grey */
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+            color: white;
         }
-        .copy-button {
-            margin-left: 10px;
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .ip-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .ip-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .ip-item span {
+            flex-grow: 1;
+            word-wrap: break-word;
+            color: white; /* Шрифт IP-адреси білий */
+        }
+        .copy-btn {
+            background-color: #7289da; /* Discord-like blue */
+            color: white;
+            border: none;
             padding: 5px 10px;
             cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
         }
-        .server-name {
-            font-style: italic;
-            color: green;
+        .copy-btn:hover {
+            background-color: #5b6eae; /* Darker blue on hover */
         }
     </style>
 </head>
 <body>
 
-    <h1>Whitelist Editor</h1>
-    <table id="whitelist-table">
-        <thead>
-            <tr>
-                <th>IP Address</th>
-                <th>Server Name</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be dynamically inserted here -->
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>Whitelist</h1>
+        <div class="ip-list" id="ip-list">
+            <!-- IP addresses will be inserted here -->
+        </div>
+    </div>
 
     <script>
-        // URL на файл whitelist.json на GitHub
+        // URL на файл whitelist.json на вашому GitHub
         const jsonUrl = 'https://killenjak.github.io/check_authority/whitelist.json';
-        
-        // API ключ BattleMetrics (отримати його на сайті BattleMetrics)
-        const apiKey = 'your-battlemetrics-api-key';
 
         // Функція для отримання даних з GitHub
         async function fetchWhitelistData() {
             try {
                 const response = await fetch(jsonUrl);
                 const data = await response.json();
-                renderWhitelist(data.allowed_ips);
+                renderIPList(data.allowed_ips);
             } catch (error) {
                 console.error('Error fetching whitelist data:', error);
             }
         }
 
-        // Функція для відображення IP-адрес в таблиці
-        function renderWhitelist(ips) {
-            const tableBody = document.querySelector('#whitelist-table tbody');
-            tableBody.innerHTML = ''; // Очистити таблицю перед додаванням нових даних
+        // Функція для відображення IP-адрес в списку
+        function renderIPList(ips) {
+            const ipListContainer = document.getElementById('ip-list');
+            ipListContainer.innerHTML = ''; // Очищаємо список перед додаванням нових елементів
 
-            ips.forEach(ipWithPort => {
-                const row = document.createElement('tr');
+            ips.forEach(ip => {
+                const ipItem = document.createElement('div');
+                ipItem.classList.add('ip-item');
                 
-                const ipCell = document.createElement('td');
-                const ipDisplay = document.createElement('span');
-                ipDisplay.textContent = ipWithPort;
-                ipCell.appendChild(ipDisplay);
-                row.appendChild(ipCell);
-                
-                const serverCell = document.createElement('td');
-                const serverName = document.createElement('span');
-                serverName.classList.add('server-name');
-                serverCell.appendChild(serverName);
-                row.appendChild(serverCell);
+                // Створюємо елемент для відображення IP
+                const ipText = document.createElement('span');
+                ipText.textContent = ip;
 
-                const actionCell = document.createElement('td');
+                // Створюємо кнопку для копіювання
                 const copyButton = document.createElement('button');
+                copyButton.classList.add('copy-btn');
                 copyButton.textContent = 'Copy';
-                copyButton.classList.add('copy-button');
-                
-                // Функція для копіювання IP в буфер обміну
-                copyButton.onclick = () => {
-                    copyToClipboard(ipWithPort);
-                };
+                copyButton.onclick = () => copyToClipboard(ip);
 
-                actionCell.appendChild(copyButton);
-                row.appendChild(actionCell);
-                tableBody.appendChild(row);
-
-                // Перевірка сервера через BattleMetrics API
-                const ip = ipWithPort.split(':')[0]; // Витягуємо тільки IP без порту
-                checkServerName(ip, serverName);
+                ipItem.appendChild(ipText);
+                ipItem.appendChild(copyButton);
+                ipListContainer.appendChild(ipItem);
             });
         }
 
@@ -117,34 +120,9 @@
             alert(`IP Address ${ip} copied to clipboard!`);
         }
 
-        // Функція для перевірки сервера через BattleMetrics API
-        async function checkServerName(ip, serverNameElement) {
-            const url = `https://api.battlemetrics.com/servers?filter[ip]=${ip}`;
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`
-                    }
-                });
-                const data = await response.json();
-
-                // Логування відповіді API
-                console.log('API Response:', data);
-
-                if (data.data && data.data.length > 0) {
-                    const serverName = data.data[0].attributes.name;
-                    serverNameElement.textContent = serverName ? serverName : 'Server not found';
-                } else {
-                    serverNameElement.textContent = 'Server not found';
-                }
-            } catch (error) {
-                console.error(`Error fetching server info for IP ${ip}:`, error);
-                serverNameElement.textContent = 'Error fetching server info';
-            }
-        }
-
-        // Завантаження даних після завантаження сторінки
+        // Завантаження даних при завантаженні сторінки
         window.onload = fetchWhitelistData;
     </script>
+    
 </body>
 </html>
