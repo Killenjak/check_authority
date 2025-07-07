@@ -84,7 +84,7 @@
                     const ipItem = document.createElement('div');
                     ipItem.classList.add('ip-item');
                     ipItem.innerHTML = `
-                        <span>${server.number} - ${server.servername}</span>
+                        <span>${server.number}. ${server.servername}</span>
                         <span>${server["IP-adress"]}</span>
                         <button class="copy-btn" onclick="copyToClipboard('${server["IP-adress"]}')">COPY</button>
                     `;
