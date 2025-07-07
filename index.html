@@ -71,12 +71,12 @@
             const tableBody = document.querySelector('#whitelist-table tbody');
             tableBody.innerHTML = ''; // Очистити таблицю перед додаванням нових даних
 
-            ips.forEach(ip => {
+            ips.forEach(ipWithPort => {
                 const row = document.createElement('tr');
                 
                 const ipCell = document.createElement('td');
                 const ipDisplay = document.createElement('span');
-                ipDisplay.textContent = ip;
+                ipDisplay.textContent = ipWithPort;
                 ipCell.appendChild(ipDisplay);
                 row.appendChild(ipCell);
                 
@@ -93,7 +93,7 @@
                 
                 // Функція для копіювання IP в буфер обміну
                 copyButton.onclick = () => {
-                    copyToClipboard(ip);
+                    copyToClipboard(ipWithPort);
                 };
 
                 actionCell.appendChild(copyButton);
@@ -101,6 +101,7 @@
                 tableBody.appendChild(row);
 
                 // Перевірка сервера через BattleMetrics API
+                const ip = ipWithPort.split(':')[0]; // Витягуємо тільки IP без порту
                 checkServerName(ip, serverName);
             });
         }
