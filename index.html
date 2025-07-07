@@ -21,6 +21,11 @@
         .editable {
             width: 80%;
         }
+        .copy-button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -30,6 +35,7 @@
         <thead>
             <tr>
                 <th>IP Address</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -61,21 +67,36 @@
                 const row = document.createElement('tr');
                 
                 const ipCell = document.createElement('td');
-                const ipInput = document.createElement('input');
-                ipInput.type = 'text';
-                ipInput.value = ip;
-                ipInput.classList.add('editable');
-                
-                // Додаємо обробник для зміни значення IP-адреси
-                ipInput.addEventListener('input', () => {
-                    console.log(`IP Address changed to: ${ipInput.value}`);
-                    // Тут можна додати код для збереження змін
-                });
-                
-                ipCell.appendChild(ipInput);
+                const ipDisplay = document.createElement('span');
+                ipDisplay.textContent = ip;
+                ipCell.appendChild(ipDisplay);
                 row.appendChild(ipCell);
+                
+                const actionCell = document.createElement('td');
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy';
+                copyButton.classList.add('copy-button');
+                
+                // Функція для копіювання IP в буфер обміну
+                copyButton.onclick = () => {
+                    copyToClipboard(ip);
+                };
+
+                actionCell.appendChild(copyButton);
+                row.appendChild(actionCell);
                 tableBody.appendChild(row);
             });
+        }
+
+        // Функція для копіювання IP в буфер обміну
+        function copyToClipboard(ip) {
+            const textArea = document.createElement('textarea');
+            textArea.value = ip;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert(`IP Address ${ip} copied to clipboard!`);
         }
 
         // Завантаження даних після завантаження сторінки
