@@ -26,6 +26,10 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+        .server-name {
+            font-style: italic;
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -35,6 +39,7 @@
         <thead>
             <tr>
                 <th>IP Address</th>
+                <th>Server Name</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -46,6 +51,9 @@
     <script>
         // URL на файл whitelist.json на GitHub
         const jsonUrl = 'https://killenjak.github.io/check_authority/whitelist.json';
+        
+        // API ключ BattleMetrics (отримати його на сайті BattleMetrics)
+        const apiKey = 'your-battlemetrics-api-key';
 
         // Функція для отримання даних з GitHub
         async function fetchWhitelistData() {
@@ -72,6 +80,12 @@
                 ipCell.appendChild(ipDisplay);
                 row.appendChild(ipCell);
                 
+                const serverCell = document.createElement('td');
+                const serverName = document.createElement('span');
+                serverName.classList.add('server-name');
+                serverCell.appendChild(serverName);
+                row.appendChild(serverCell);
+
                 const actionCell = document.createElement('td');
                 const copyButton = document.createElement('button');
                 copyButton.textContent = 'Copy';
@@ -85,6 +99,9 @@
                 actionCell.appendChild(copyButton);
                 row.appendChild(actionCell);
                 tableBody.appendChild(row);
+
+                // Перевірка сервера через BattleMetrics API
+                checkServerName(ip, serverName);
             });
         }
 
@@ -97,6 +114,28 @@
             document.execCommand('copy');
             document.body.removeChild(textArea);
             alert(`IP Address ${ip} copied to clipboard!`);
+        }
+
+        // Функція для перевірки сервера через BattleMetrics API
+        async function checkServerName(ip, serverNameElement) {
+            const url = `https://api.battlemetrics.com/servers?filter[ip]=${ip}`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+                const data = await response.json();
+                if (data.data && data.data.length > 0) {
+                    const serverName = data.data[0].attributes.name;
+                    serverNameElement.textContent = serverName ? serverName : 'Server not found';
+                } else {
+                    serverNameElement.textContent = 'Server not found';
+                }
+            } catch (error) {
+                console.error(`Error fetching server info for IP ${ip}:`, error);
+                serverNameElement.textContent = 'Error fetching server info';
+            }
         }
 
         // Завантаження даних після завантаження сторінки
