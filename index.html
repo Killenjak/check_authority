@@ -11,14 +11,14 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            background-color: #2f3136; /* Discord-like dark grey */
+            background-color: #2f3136;
             height: 100vh;
             align-items: center;
         }
         .container {
             width: 80%;
             max-width: 800px;
-            background-color: #36393f; /* Slightly lighter grey */
+            background-color: #36393f;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
@@ -49,7 +49,7 @@
             color: white;
         }
         .copy-btn {
-            background-color: #7289da; /* Discord-like blue */
+            background-color: #7289da;
             color: white;
             border: none;
             padding: 5px 10px;
@@ -66,26 +66,25 @@
     <div class="container">
         <h1>Server Whitelist</h1>
         <div class="ip-list" id="ipList">
-            <!-- List of servers will be displayed here -->
+            <!-- IPs will be inserted here -->
         </div>
     </div>
 
     <script>
-        // URL до файлу JSON на GitHub
+        // JSON-файл за URL
         const fileUrl = 'https://killenjak.github.io/check_authority/whitelist.json';
 
-        // Завантаження JSON з GitHub
+        // Завантаження IP-адрес
         fetch(fileUrl)
             .then(response => response.json())
             .then(data => {
-                // Виведення серверів на сторінку
                 const ipListElement = document.getElementById('ipList');
-                data.allowed_servers.forEach((server, index) => {
+                data.allowed_ips.forEach((ip, index) => {
                     const ipItem = document.createElement('div');
                     ipItem.classList.add('ip-item');
                     ipItem.innerHTML = `
-                        <span>${index + 1}. ${server.ip}</span>
-                        <button class="copy-btn" onclick="copyToClipboard('${server.ip}')">COPY</button>
+                        <span>${index + 1}. ${ip}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${ip}')">COPY</button>
                     `;
                     ipListElement.appendChild(ipItem);
                 });
@@ -94,7 +93,7 @@
                 console.error('Error loading JSON:', error);
             });
 
-        // Функція для копіювання IP до буфера обміну
+        // Копіювання IP
         function copyToClipboard(ip) {
             const tempInput = document.createElement('input');
             tempInput.value = ip;
